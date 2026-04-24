@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-grid.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        .quantity-input {
+            width: 80px;
+            text-align: center;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+
+<!-- ===== CART SIDEBAR ===== -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartSidebar" style="width: 380px;">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-bold">
+            <i class="fa fa-cart-arrow-down me-2"></i> កន្ត្រកទំនិញ
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column p-0">
+        <div id="cart-items-list" class="flex-grow-1 p-3 overflow-auto"></div>
+        <div id="cart-empty" class="text-center text-muted py-5 d-none">
+            <i class="fa-solid fa-bag-shopping fa-3x mb-3 text-secondary"></i>
+            <p class="fw-bold">កន្ត្រកទទេ!</p>
+            <p style="font-size:13px;">សូមបន្ថែមទំនិញ</p>
+        </div>
+        <div id="cart-footer" class="border-top p-3 d-none">
+            <div class="d-flex justify-content-between fw-bold mb-3">
+                <span>សរុបទាំងអស់:</span>
+                <span class="text-danger" id="cart-total">$0.00</span>
+            </div>
+            <a href="#" class="btn btn-primary w-100 mb-2">
+                <i class="fa-solid fa-credit-card me-1"></i> បង់ប្រាក់
+            </a>
+            <button class="btn btn-outline-danger w-100" onclick="clearCart()">
+                <i class="fa-solid fa-trash me-1"></i> លុបទំនិញទាំងអស់
+            </button>
+        </div>
+    </div>
+</div>
+
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+    <header>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="index.html">
+                    <img src="assets/images/logos/logo.png" width="150px">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" href="index.html">ទំព័រដើម</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" href="category.html">ប្រភេទទំនិញ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" href="about.html">អំពីពួកយើង</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" href="#footer">ទំនាក់ទំនង</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="d-flex gap-3 align-items-center">
+                <div class="position-relative" role="button" data-bs-toggle="offcanvas" data-bs-target="#cartSidebar">
+                    <i class="fa fa-cart-arrow-down fa-lg"></i>
+                    <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">0</span>
+                </div>
+                <i class="fa-solid fa-circle-user"></i>
+                <img src="assets/images/telegram-removebg-preview.png" alt="" width="25">
+            </div>
+        </nav>
+    </header>
+
+    <!-- ===== PRODUCT DETAIL SECTION ===== -->
+    <div class="container mt-5">
+
+        <!-- Back button -->
+        <a href="index.html" class="btn btn-outline-secondary mb-4">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </a>
+
+        <div class="row" id="product-detail-container">
+            <!-- Product content will be injected here by JavaScript -->
+        </div>
+
+        <!-- Not found message (hidden by default) -->
+        <div id="not-found" class="text-center d-none mt-5">
+            <h3>Product not found!</h3>
+            <a href="index.html" class="btn btn-primary mt-3">Go back to Home</a>
+        </div>
+
+    </div>
+
+    <footer class="mt-5 py-4 bg-light text-center">
+        <p class="mb-0">&copy; 2024 Your Shop. All rights reserved.</p>
+    </footer>
+
+    <script src="assets/js/bootstrap.bundle.js"></script>
+    <script src="assets/js/bootstrap.js"></script>
+
+    <script>
+        // ===== PRODUCT DATA =====
+        const products = [
+            {
+                id: 1,
+                name: "Apple",
+                price: "$1.50",
+                description: "Fresh red apples sourced from local farms. Rich in fiber and antioxidants, perfect for a healthy snack.",
+                category: "Fruits",
+                stock: "In Stock",
+                image: "assets/images/banner/apple.jpg"
+            },
+            {
+                id: 2,
+                name: "Banana",
+                price: "$0.80",
+                description: "Sweet and ripe bananas, great for smoothies or eating on the go. High in potassium and natural energy.",
+                category: "Fruits",
+                stock: "In Stock",
+                image: "assets/images/banner/banana.jpg"
+            },
+            {
+                id: 3,
+                name: "Orange",
+                price: "$1.20",
+                description: "Juicy and tangy oranges packed with Vitamin C. Perfect for juicing or eating fresh.",
+                category: "Fruits",
+                stock: "In Stock",
+                image: "assets/images/banner/orange.jpg"
+            },
+            {
+                id: 4,
+                name: "Papaya",
+                price: "$2.00",
+                description: "Tropical papaya with a sweet, buttery taste. Rich in digestive enzymes and Vitamin A.",
+                category: "Fruits",
+                stock: "In Stock",
+                image: "assets/images/banner/papaya.jpg"
+            },
+            {
+                id: 5,
+                name: "Coconut",
+                price: "$3.50",
+                description: "Fresh whole coconuts. Great for drinking the water or using the meat in cooking.",
+                category: "Fruits",
+                stock: "In Stock",
+                image: "assets/images/banner/coconut.jpg"
+            },
+            {
+                id: 6,
+                name: "Mango",
+                price: "$2.50",
+                description: "Sweet and fragrant mangoes at peak ripeness. A tropical favourite enjoyed fresh or in desserts.",
+                category: "Fruits",
+                stock: "In Stock",
+                image: "assets/images/banner/mango.jpg"
+            }
+        ];
+
+        // ===== CART STATE (same as index.html) =====
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // ===== ADD TO CART FUNCTION =====
+        function addToCart(id, name, price, quantity = 1) {
+            // Get existing cart
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            // Check if product already exists
+            const existingIndex = cart.findIndex(item => item.id === id);
+            
+            if (existingIndex !== -1) {
+                // Update quantity if product exists
+                cart[existingIndex].qty += quantity;
+            } else {
+                // Add new product
+                cart.push({
+                    id: id,
+                    name: name,
+                    price: price,
+                    image: "assets/images/banner/banner.jpg",
+                    qty: quantity
+                });
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Update cart display
+            renderCart();
+            
+            // Show success message
+            showToast(name, quantity);
+            
+            // Open cart sidebar
+            const sidebar = new bootstrap.Offcanvas(document.getElementById('cartSidebar'));
+            sidebar.show();
+        }
+
+        // ===== SHOW SUCCESS TOAST =====
+        function showToast(productName, quantity) {
+            // Create toast container if it doesn't exist
+            let toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+                toastContainer.style.zIndex = '1100';
+                document.body.appendChild(toastContainer);
+            }
+            
+            // Create toast
+            const toastId = 'toast-' + Date.now();
+            const toastHTML = `
+                <div id="${toastId}" class="toast show" role="alert">
+                    <div class="toast-header bg-success text-white">
+                        <i class="fa-solid fa-circle-check me-2"></i>
+                        <strong class="me-auto">Added to Cart</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        Added ${quantity} x ${productName} to your cart!
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                const toast = document.getElementById(toastId);
+                if (toast) {
+                    toast.remove();
+                }
+            }, 3000);
+        }
+
+        // ===== REMOVE ITEM =====
+        function removeFromCart(id) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart = cart.filter(item => item.id !== id);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        // ===== CHANGE QUANTITY =====
+        function changeQty(id, delta) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const itemIndex = cart.findIndex(item => item.id === id);
+            
+            if (itemIndex !== -1) {
+                cart[itemIndex].qty += delta;
+                if (cart[itemIndex].qty <= 0) {
+                    cart.splice(itemIndex, 1);
+                }
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        // ===== CLEAR CART =====
+        function clearCart() {
+            localStorage.setItem('cart', JSON.stringify([]));
+            renderCart();
+        }
+
+        // ===== RENDER CART =====
+        function renderCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const list = document.getElementById('cart-items-list');
+            const empty = document.getElementById('cart-empty');
+            const footer = document.getElementById('cart-footer');
+            const countBadge = document.getElementById('cart-count');
+
+            if (cart.length === 0) {
+                if (list) list.innerHTML = '';
+                if (empty) empty.classList.remove('d-none');
+                if (footer) footer.classList.add('d-none');
+                if (countBadge) countBadge.classList.add('d-none');
+                return;
+            }
+
+            if (empty) empty.classList.add('d-none');
+            if (footer) footer.classList.remove('d-none');
+            if (countBadge) countBadge.classList.remove('d-none');
+
+            // Total item count for badge
+            const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+            if (countBadge) countBadge.textContent = totalCount;
+
+            // Calculate total price
+            let total = 0;
+            cart.forEach(item => {
+                const priceNum = parseFloat(item.price.replace('$', ''));
+                total += priceNum * item.qty;
+            });
+            
+            const totalElement = document.getElementById('cart-total');
+            if (totalElement) totalElement.textContent = '$' + total.toFixed(2);
+
+            // Render items
+            if (list) {
+                list.innerHTML = cart.map(item => `
+                    <div class="d-flex align-items-center gap-3 mb-3 p-2 border rounded">
+                        <img src="${item.image}" width="60" height="60" style="object-fit:cover; border-radius:8px;">
+                        <div class="flex-grow-1">
+                            <p class="mb-1 fw-bold" style="font-size:14px;">${item.name}</p>
+                            <p class="mb-1 text-danger fw-bold" style="font-size:13px;">${item.price}</p>
+                            <div class="d-flex align-items-center gap-2">
+                                <button class="btn btn-outline-secondary btn-sm px-2 py-0" onclick="changeQty(${item.id}, -1)">-</button>
+                                <span class="fw-bold">${item.qty}</span>
+                                <button class="btn btn-outline-secondary btn-sm px-2 py-0" onclick="changeQty(${item.id}, 1)">+</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart(${item.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // ===== GET ID FROM URL =====
+        const params = new URLSearchParams(window.location.search);
+        const productId = parseInt(params.get("id"));
+
+        // ===== FIND PRODUCT =====
+        const product = products.find(p => p.id === productId);
+
+        // ===== RENDER PRODUCT =====
+        if (product) {
+            document.title = product.name + " - Product Detail";
+            document.getElementById("product-detail-container").innerHTML = `
+                <div class="col-12 col-md-5 mb-4">
+                    <img src="${product.image}" class="w-100 rounded shadow" alt="${product.name}">
+                </div>
+                <div class="col-12 col-md-7 ps-md-5">
+                    <span class="badge bg-secondary mb-2">${product.category}</span>
+                    <h2 class="fw-bold">${product.name}</h2>
+                    <h4 class="text-danger fw-bold mt-2">${product.price}</h4>
+                    <span class="badge bg-success mb-3">${product.stock}</span>
+                    <p class="text-muted mt-2">${product.description}</p>
+                    <hr>
+                    <div class="d-flex align-items-center gap-3 mt-3">
+                        <label class="fw-bold">បរិមាណ:</label>
+                        <input type="number" id="product-quantity" value="1" min="1" max="99" class="form-control quantity-input">
+                    </div>
+                    <div class="d-flex gap-3 mt-4">
+                        <button class="btn btn-primary px-4" onclick="addToCart(${product.id}, '${product.name}', '${product.price}', parseInt(document.getElementById('product-quantity').value))">
+                            <i class="fa fa-cart-arrow-down"></i> Add to Cart
+                        </button>
+                        <button class="btn btn-outline-danger px-4">
+                            <i class="fa-regular fa-heart"></i> Wishlist
+                        </button>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Show not found message
+            document.getElementById("not-found").classList.remove("d-none");
+        }
+
+        // ===== INITIAL RENDER =====
+        renderCart();
+    </script>
+
+</body>
+
+</html>
